@@ -1,0 +1,16 @@
+{
+  "ab_test": {
+    "model_a": "gen_MoE_top5_attention",
+    "model_b": "gen_ours_100hr"
+  },
+  "emotions": [
+    "Angry",
+    "Happy",
+    "Sad",
+    "Neutral",
+    "Laughing",
+    "Crying"
+  ],
+  "sets_per_emotion": 5,
+  "models_per_set": 7
+}

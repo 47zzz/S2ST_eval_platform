@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speech Evaluation — Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+TC:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .login-card {
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .login-logo {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .login-logo .logo-icon {
+            font-size: 3rem;
+        }
+
+        .login-logo h1 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-top: 10px;
+        }
+
+        .login-logo p {
+            font-size: 0.82rem;
+            color: var(--muted);
+        }
+
+        .divider {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 24px 0;
+        }
+
+        /* Modal Styles */
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal {
+            background: var(--surface);
+            padding: 24px;
+            border-radius: var(--radius);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal h2 {
+            margin-top: 0;
+            font-size: 1.2rem;
+            color: var(--text);
+        }
+
+        .modal p {
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .modal-actions button {
+            flex: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page-center">
+        <div class="card login-card">
+            <div class="login-logo">
+                <div class="logo-icon">🎙️</div>
+                <h1>Speech Evaluation Platform</h1>
+                <p>Expressive S2ST 評測系統</p>
+            </div>
+
+            <hr class="divider">
+
+            <form id="login-form" autocomplete="off">
+                <div class="form-group">
+                    <label class="form-label" for="subject-id">Subject ID</label>
+                    <input class="form-input" type="text" id="subject-id" placeholder="e.g. 001" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <input class="form-input" type="password" id="password" placeholder="••••••" required>
+                </div>
+                <div id="error-msg" class="form-error" style="display:none;"></div>
+                <button class="btn btn-primary" type="submit" style="width:100%; margin-top:8px;" id="login-btn">
+                    Log In &amp; Start
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Resume Confirmation Modal -->
+    <div class="modal-backdrop" id="resume-modal">
+        <div class="modal">
+            <h2>未完成紀錄 / Incomplete Progress</h2>
+            <p id="resume-text">
+                請問要恢復上次的作答進度嗎？<br>
+                Would you like to resume your previous progress?<br>
+                <strong id="resume-status"
+                    style="color:var(--accent); display:block; margin-top:12px; margin-bottom:12px; font-size:1.1rem;"></strong>
+                <span style="font-size: 0.85em;">（若選擇「重新開始」，先前的紀錄將會被清除）<br>
+                    (If you choose "Restart", your previous records will be cleared)</span>
+            </p>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="btn-restart">重新開始<br>Restart</button>
+                <button class="btn btn-primary" id="btn-resume">恢復進度<br>Resume</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        const PASSWORD = '123456';
+
+        document.getElementById('login-form').addEventListener('submit', async e => {
+            e.preventDefault();
+            const errEl = document.getElementById('error-msg');
+            const loginBtn = document.getElementById('login-btn');
+            errEl.style.display = 'none';
+            loginBtn.disabled = true;
+
+            const subject_id = document.getElementById('subject-id').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            if (!subject_id) {
+                errEl.textContent = 'Please enter your Subject ID.';
+                errEl.style.display = 'block';
+                loginBtn.disabled = false;
+                return;
+            }
+            if (password !== PASSWORD) {
+                errEl.textContent = 'Incorrect password. Please try again.';
+                errEl.style.display = 'block';
+                loginBtn.disabled = false;
+                return;
+            }
+
+            Session.set('subject_id', subject_id);
+
+            // Check progression
+            const mosState = loadLocalState('mos');
+            const abState = loadLocalState('ab');
+
+            if (mosState || abState) {
+                try {
+                    const [setsResp, configResp] = await Promise.all([
+                        fetch('data_manifest.json'),
+                        fetch('config.json')
+                    ]);
+                    const manifest = await setsResp.json();
+                    const config = await configResp.json();
+                    const totalSets = manifest.sets ? manifest.sets.length : 0;
+
+                    let statusText = '';
+                    let targetUrl = 'instruction_mos.html';
+
+                    // Determine what phase to resume to
+                    if (abState) {
+                        const abValidSets = manifest.sets.filter(s => s.models[config.ab_test.model_a] && s.models[config.ab_test.model_b]).length;
+                        // if MOS is done and AB exists, we resume AB
+                        statusText = `AB Test (${abState.currentIdx}/${abValidSets})`;
+                        targetUrl = 'eval_ab.html';
+                    } else if (mosState) {
+                        statusText = `MOS (${mosState.currentIdx}/${totalSets})`;
+                        targetUrl = 'eval_mos.html';
+                    }
+
+                    document.getElementById('resume-status').textContent = statusText;
+                    document.getElementById('resume-modal').style.display = 'flex';
+
+                    document.getElementById('btn-resume').onclick = () => {
+                        location.href = targetUrl;
+                    };
+                    document.getElementById('btn-restart').onclick = () => {
+                        clearLocalState('mos');
+                        clearLocalState('ab');
+                        location.href = 'instruction_mos.html';
+                    };
+                    loginBtn.disabled = false;
+                    return; // wait for modal interaction
+
+                } catch (err) {
+                    console.error('Error checking progress', err);
+                }
+            }
+
+            location.href = 'instruction_mos.html';
+        });
+    </script>
+</body>
+
+</html>

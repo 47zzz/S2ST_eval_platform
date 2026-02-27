@@ -1,0 +1,394 @@
+{
+  "sets": [
+    {
+      "emotion": "Angry",
+      "set": "set_1",
+      "source": "../data/Angry/set_1/source/id00692_isRn-mIQiqc_00311.wav",
+      "models": {
+        "gen_MoE_top5_attention": "../data/Angry/set_1/gen_MoE_top5_attention/id00692_isRn-mIQiqc_00311_gen.wav",
+        "gen_cascaded": "../data/Angry/set_1/gen_cascaded/id00692_isRn-mIQiqc_00311_gen.wav",
+        "gen_expressive": "../data/Angry/set_1/gen_expressive/id00692_isRn-mIQiqc_00311_expressive.wav",
+        "gen_kimi_instruct": "../data/Angry/set_1/gen_kimi_instruct/id00692_isRn-mIQiqc_00311_gen.wav",
+        "gen_ours_100hr": "../data/Angry/set_1/gen_ours_100hr/id00692_isRn-mIQiqc_00311_gen.wav",
+        "gen_seamlessm4t": "../data/Angry/set_1/gen_seamlessm4t/id00692_isRn-mIQiqc_00311_gen.wav"
+      }
+    },
+    {
+      "emotion": "Angry",
+      "set": "set_2",
+      "source": "../data/Angry/set_2/source/id01388_vz7sd77KOlI_00024.wav",
+      "models": {
+        "gen_MoE_top5_attention": "../data/Angry/set_2/gen_MoE_top5_attention/id01388_vz7sd77KOlI_00024_gen.wav",
+        "gen_cascaded": "../data/Angry/set_2/gen_cascaded/id01388_vz7sd77KOlI_00024_gen.wav",
+        "gen_expressive": "../data/Angry/set_2/gen_expressive/id01388_vz7sd77KOlI_00024_expressive.wav",
+        "gen_kimi_instruct": "../data/Angry/set_2/gen_kimi_instruct/id01388_vz7sd77KOlI_00024_gen.wav",
+        "gen_ours_100hr": "../data/Angry/set_2/gen_ours_100hr/id01388_vz7sd77KOlI_00024_gen.wav",
+        "gen_seamlessm4t": "../data/Angry/set_2/gen_seamlessm4t/id01388_vz7sd77KOlI_00024_gen.wav"
+      }
+    },
+    {
+      "emotion": "Angry",
+      "set": "set_3",
+      "source": "../data/Angry/set_3/source/id06119_gwiyIHnH5Ak_00194.wav",
+      "models": {
+        "gen_MoE_top5_attention": "../data/Angry/set_3/gen_MoE_top5_attention/id06119_gwiyIHnH5Ak_00194_gen.wav",
+        "gen_cascaded": "../data/Angry/set_3/gen_cascaded/id06119_gwiyIHnH5Ak_00194_gen.wav",
+        "gen_expressive": "../data/Angry/set_3/gen_expressive/id06119_gwiyIHnH5Ak_00194_expressive.wav",
+        "gen_kimi_instruct": "../data/Angry/set_3/gen_kimi_instruct/id06119_gwiyIHnH5Ak_00194_gen.wav",
+        "gen_ours_100hr": "../data/Angry/set_3/gen_ours_100hr/id06119_gwiyIHnH5Ak_00194_gen.wav",
+        "gen_seamlessm4t": "../data/Angry/set_3/gen_seamlessm4t/id06119_gwiyIHnH5Ak_00194_gen.wav"
+      }
+    },
+    {
+      "emotion": "Angry",
+      "set": "set_4",
+      "source": "../data/Angry/set_4/source/ex04-ex02_angry_006-ex04_angry_css028.wav",
+      "models": {
+        "gen_MoE_top5_attention": "../data/Angry/set_4/gen_MoE_top5_attention/ex04-ex02_angry_006-ex04_angry_css028_gen.wav",
+        "gen_cascaded": "../data/Angry/set_4/gen_cascaded/ex04-ex02_angry_006-ex04_angry_css028_gen.wav",
+        "gen_expressive": "../data/Angry/set_4/gen_expressive/ex04-ex02_angry_006-ex04_angry_css028_expressive.wav",
+        "gen_kimi_instruct": "../data/Angry/set_4/gen_kimi_instruct/ex04-ex02_angry_006-ex04_angry_css028_gen.wav",
+        "gen_ours_100hr": "../data/Angry/set_4/gen_ours_100hr/ex04-ex02_angry_006-ex04_angry_css028_gen.wav",
+        "gen_seamlessm4t": "../data/Angry/set_4/gen_seamlessm4t/ex04-ex02_angry_006-ex04_angry_css028_gen.wav"
+      }
+    },
+    {
+      "emotion": "Angry",
+      "set": "set_5",
+      "source": "../data/Angry/set_5/source/ex04-ex02_nonverbal_001-ex02_nonverbal_css004.wav",
+      "models": {
+        "gen_MoE_top5_attention": "../data/Angry/set_5/gen_MoE_top5_attention/ex04-ex02_nonverbal_001-ex02_nonverbal_css004_gen.wav",
+        "gen_cascaded": "../data/Angry/set_5/gen_cascaded/ex04-ex02_nonverbal_001-ex02_nonverbal_css004_gen.wav",
+        "gen_expressive": "../data/Angry/set_5/gen_expressive/ex04-ex02_nonverbal_001-ex02_nonverbal_css004_expressive.wav",
+        "gen_kimi_instruct": "../data/Angry/set_5/gen_kimi_instruct/ex04-ex02_nonverbal_001-ex02_nonverbal_css004_gen.wav",
+        "gen_ours_100hr": "../data/Angry/set_5/gen_ours_100hr/ex04-ex02_nonverbal_001-ex02_nonverbal_css004_gen.wav",
+        "gen_seamlessm4t": "../data/Angry/set_5/gen_seamlessm4t/ex04-ex02_nonverbal_001-ex02_nonverbal_css004_gen.wav"
+      }
+    },
+    {
+      "emotion": "Crying",
+      "set": "set_1",
+      "source": "../data/Crying/set_1/source/ex03-ex02_sympathetic-sad_008-ex02_sad_css021.wav",
+      "models": {
+        "gen_MoE_top5_attention": "../data/Crying/set_1/gen_MoE_top5_attention/ex03-ex02_sympathetic-sad_008-ex02_sad_css021_gen.wav",
+        "gen_cascaded": "../data/Crying/set_1/gen_cascaded/ex03-ex02_sympathetic-sad_008-ex02_sad_css021_gen.wav",
+        "gen_expressive": "../data/Crying/set_1/gen_expressive/ex03-ex02_sympathetic-sad_008-ex02_sad_css021_expressive.wav",
+        "gen_kimi_instruct": "../data/Crying/set_1/gen_kimi_instruct/ex03-ex02_sympathetic-sad_008-ex02_sad_css021_gen.wav",
+        "gen_ours_100hr": "../data/Crying/set_1/gen_ours_100hr/ex03-ex02_sympathetic-sad_008-ex02_sad_css021_gen.wav",
+        "gen_seamlessm4t": "../data/Crying/set_1/gen_seamlessm4t/ex03-ex02_sympathetic-sad_008-ex02_sad_css021_gen.wav"
+      }
+    },
+    {
+      "emotion": "Crying",
+      "set": "set_2",
+      "source": "../data/Crying/set_2/source/ex04-ex01_sympathetic-sad_012-ex01_sad_css020.wav",
+      "models": {
+        "gen_MoE_top5_attention": "../data/Crying/set_2/gen_MoE_top5_attention/ex04-ex01_sympathetic-sad_012-ex01_sad_css020_gen.wav",
+        "gen_cascaded": "../data/Crying/set_2/gen_cascaded/ex04-ex01_sympathetic-sad_012-ex01_sad_css020_gen.wav",
+        "gen_expressive": "../data/Crying/set_2/gen_expressive/ex04-ex01_sympathetic-sad_012-ex01_sad_css020_expressive.wav",
+        "gen_kimi_instruct": "../data/Crying/set_2/gen_kimi_instruct/ex04-ex01_sympathetic-sad_012-ex01_sad_css020_gen.wav",
+        "gen_ours_100hr": "../data/Crying/set_2/gen_ours_100hr/ex04-ex01_sympathetic-sad_012-ex01_sad_css020_gen.wav",
+        "gen_seamlessm4t": "../data/Crying/set_2/gen_seamlessm4t/ex04-ex01_sympathetic-sad_012-ex01_sad_css020_gen.wav"
+      }
+    },
+    {
+      "emotion": "Crying",
+      "set": "set_3",
+      "source": "../data/Crying/set_3/source/ex03-ex02_sympathetic-sad_015-ex02_sad_css018.wav",
+      "models": {
+        "gen_MoE_top5_attention": "../data/Crying/set_3/gen_MoE_top5_attention/ex03-ex02_sympathetic-sad_015-ex02_sad_css018_gen.wav",
+        "gen_cascaded": "../data/Crying/set_3/gen_cascaded/ex03-ex02_sympathetic-sad_015-ex02_sad_css018_gen.wav",
+        "gen_expressive": "../data/Crying/set_3/gen_expressive/ex03-ex02_sympathetic-sad_015-ex02_sad_css018_expressive.wav",
+        "gen_kimi_instruct": "../data/Crying/set_3/gen_kimi_instruct/ex03-ex02_sympathetic-sad_015-ex02_sad_css018_gen.wav",
+        "gen_ours_100hr": "../data/Crying/set_3/gen_ours_100hr/ex03-ex02_sympathetic-sad_015-ex02_sad_css018_gen.wav",
+        "gen_seamlessm4t": "../data/Crying/set_3/gen_seamlessm4t/ex03-ex02_sympathetic-sad_015-ex02_sad_css018_gen.wav"
+      }
+    },
+    {
+      "emotion": "Crying",
+      "set": "set_4",
+      "source": "../data/Crying/set_4/source/ex04-ex01_sympathetic-sad_008-ex01_sad_css017.wav",
+      "models": {
+        "gen_MoE_top5_attention": "../data/Crying/set_4/gen_MoE_top5_attention/ex04-ex01_sympathetic-sad_008-ex01_sad_css017_gen.wav",
+        "gen_cascaded": "../data/Crying/set_4/gen_cascaded/ex04-ex01_sympathetic-sad_008-ex01_sad_css017_gen.wav",
+        "gen_expressive": "../data/Crying/set_4/gen_expressive/ex04-ex01_sympathetic-sad_008-ex01_sad_css017_expressive.wav",
+        "gen_kimi_instruct": "../data/Crying/set_4/gen_kimi_instruct/ex04-ex01_sympathetic-sad_008-ex01_sad_css017_gen.wav",
+        "gen_ours_100hr": "../data/Crying/set_4/gen_ours_100hr/ex04-ex01_sympathetic-sad_008-ex01_sad_css017_gen.wav",
+        "gen_seamlessm4t": "../data/Crying/set_4/gen_seamlessm4t/ex04-ex01_sympathetic-sad_008-ex01_sad_css017_gen.wav"
+      }
+    },
+    {
+      "emotion": "Crying",
+      "set": "set_5",
+      "source": "../data/Crying/set_5/source/ex04-ex01_sympathetic-sad_011-ex01_sad_css007.wav",
+      "models": {
+        "gen_MoE_top5_attention": "../data/Crying/set_5/gen_MoE_top5_attention/ex04-ex01_sympathetic-sad_011-ex01_sad_css007_gen.wav",
+        "gen_cascaded": "../data/Crying/set_5/gen_cascaded/ex04-ex01_sympathetic-sad_011-ex01_sad_css007_gen.wav",
+        "gen_expressive": "../data/Crying/set_5/gen_expressive/ex04-ex01_sympathetic-sad_011-ex01_sad_css007_expressive.wav",
+        "gen_kimi_instruct": "../data/Crying/set_5/gen_kimi_instruct/ex04-ex01_sympathetic-sad_011-ex01_sad_css007_gen.wav",
+        "gen_ours_100hr": "../data/Crying/set_5/gen_ours_100hr/ex04-ex01_sympathetic-sad_011-ex01_sad_css007_gen.wav",
+        "gen_seamlessm4t": "../data/Crying/set_5/gen_seamlessm4t/ex04-ex01_sympathetic-sad_011-ex01_sad_css007_gen.wav"
+      }
+    },
+    {
+      "emotion": "Happy",
+      "set": "set_1",
+      "source": "../data/Happy/set_1/source/ex03_laughing_00013.wav",
+      "models": {
+        "gen_MoE_top5_attention": "../data/Happy/set_1/gen_MoE_top5_attention/ex03_laughing_00013_gen.wav",
+        "gen_cascaded": "../data/Happy/set_1/gen_cascaded/ex03_laughing_00013_gen.wav",
+        "gen_expressive": "../data/Happy/set_1/gen_expressive/ex03_laughing_00013_expressive.wav",
+        "gen_kimi_instruct": "../data/Happy/set_1/gen_kimi_instruct/ex03_laughing_00013_gen.wav",
+        "gen_ours_100hr": "../data/Happy/set_1/gen_ours_100hr/ex03_laughing_00013_gen.wav",
+        "gen_seamlessm4t": "../data/Happy/set_1/gen_seamlessm4t/ex03_laughing_00013_gen.wav"
+      }
+    },
+    {
+      "emotion": "Happy",
+      "set": "set_2",
+      "source": "../data/Happy/set_2/source/ex04-ex02_happy_009-ex04_happy_css020.wav",
+      "models": {
+        "gen_MoE_top5_attention": "../data/Happy/set_2/gen_MoE_top5_attention/ex04-ex02_happy_009-ex04_happy_css020_gen.wav",
+        "gen_cascaded": "../data/Happy/set_2/gen_cascaded/ex04-ex02_happy_009-ex04_happy_css020_gen.wav",
+        "gen_expressive": "../data/Happy/set_2/gen_expressive/ex04-ex02_happy_009-ex04_happy_css020_expressive.wav",
+        "gen_kimi_instruct": "../data/Happy/set_2/gen_kimi_instruct/ex04-ex02_happy_009-ex04_happy_css020_gen.wav",
+        "gen_ours_100hr": "../data/Happy/set_2/gen_ours_100hr/ex04-ex02_happy_009-ex04_happy_css020_gen.wav",
+        "gen_seamlessm4t": "../data/Happy/set_2/gen_seamlessm4t/ex04-ex02_happy_009-ex04_happy_css020_gen.wav"
+      }
+    },
+    {
+      "emotion": "Happy",
+      "set": "set_3",
+      "source": "../data/Happy/set_3/source/ex04-ex02_nonverbal_008-ex02_nonverbal_css001.wav",
+      "models": {
+        "gen_MoE_top5_attention": "../data/Happy/set_3/gen_MoE_top5_attention/ex04-ex02_nonverbal_008-ex02_nonverbal_css001_gen.wav",
+        "gen_cascaded": "../data/Happy/set_3/gen_cascaded/ex04-ex02_nonverbal_008-ex02_nonverbal_css001_gen.wav",
+        "gen_expressive": "../data/Happy/set_3/gen_expressive/ex04-ex02_nonverbal_008-ex02_nonverbal_css001_expressive.wav",
+        "gen_kimi_instruct": "../data/Happy/set_3/gen_kimi_instruct/ex04-ex02_nonverbal_008-ex02_nonverbal_css001_gen.wav",
+        "gen_ours_100hr": "../data/Happy/set_3/gen_ours_100hr/ex04-ex02_nonverbal_008-ex02_nonverbal_css001_gen.wav",
+        "gen_seamlessm4t": "../data/Happy/set_3/gen_seamlessm4t/ex04-ex02_nonverbal_008-ex02_nonverbal_css001_gen.wav"
+      }
+    },
+    {
+      "emotion": "Happy",
+      "set": "set_4",
+      "source": "../data/Happy/set_4/source/id10611_7_ZlkxpOTsY_00092.wav",
+      "models": {
+        "gen_MoE_top5_attention": "../data/Happy/set_4/gen_MoE_top5_attention/id10611_7_ZlkxpOTsY_00092_gen.wav",
+        "gen_cascaded": "../data/Happy/set_4/gen_cascaded/id10611_7_ZlkxpOTsY_00092_gen.wav",
+        "gen_expressive": "../data/Happy/set_4/gen_expressive/id10611_7_ZlkxpOTsY_00092_expressive.wav",
+        "gen_kimi_instruct": "../data/Happy/set_4/gen_kimi_instruct/id10611_7_ZlkxpOTsY_00092_gen.wav",
+        "gen_ours_100hr": "../data/Happy/set_4/gen_ours_100hr/id10611_7_ZlkxpOTsY_00092_gen.wav",
+        "gen_seamlessm4t": "../data/Happy/set_4/gen_seamlessm4t/id10611_7_ZlkxpOTsY_00092_gen.wav"
+      }
+    },
+    {
+      "emotion": "Happy",
+      "set": "set_5",
+      "source": "../data/Happy/set_5/source/id00574_7139nBhNOgE_00060.wav",
+      "models": {
+        "gen_MoE_top5_attention": "../data/Happy/set_5/gen_MoE_top5_attention/id00574_7139nBhNOgE_00060_gen.wav",
+        "gen_cascaded": "../data/Happy/set_5/gen_cascaded/id00574_7139nBhNOgE_00060_gen.wav",
+        "gen_expressive": "../data/Happy/set_5/gen_expressive/id00574_7139nBhNOgE_00060_expressive.wav",
+        "gen_kimi_instruct": "../data/Happy/set_5/gen_kimi_instruct/id00574_7139nBhNOgE_00060_gen.wav",
+        "gen_ours_100hr": "../data/Happy/set_5/gen_ours_100hr/id00574_7139nBhNOgE_00060_gen.wav",
+        "gen_seamlessm4t": "../data/Happy/set_5/gen_seamlessm4t/id00574_7139nBhNOgE_00060_gen.wav"
+      }
+    },
+    {
+      "emotion": "Laughing",
+      "set": "set_1",
+      "source": "../data/Laughing/set_1/source/0673_ex04_laughter.wav",
+      "models": {
+        "gen_MoE_top5_attention": "../data/Laughing/set_1/gen_MoE_top5_attention/0673_ex04_laughter_gen.wav",
+        "gen_cascaded": "../data/Laughing/set_1/gen_cascaded/0673_ex04_laughter_gen.wav",
+        "gen_expressive": "../data/Laughing/set_1/gen_expressive/0673_ex04_laughter_expressive.wav",
+        "gen_kimi_instruct": "../data/Laughing/set_1/gen_kimi_instruct/0673_ex04_laughter_gen.wav",
+        "gen_ours_100hr": "../data/Laughing/set_1/gen_ours_100hr/0673_ex04_laughter_gen.wav",
+        "gen_seamlessm4t": "../data/Laughing/set_1/gen_seamlessm4t/0673_ex04_laughter_gen.wav"
+      }
+    },
+    {
+      "emotion": "Laughing",
+      "set": "set_2",
+      "source": "../data/Laughing/set_2/source/0685_ex02_laughter.wav",
+      "models": {
+        "gen_MoE_top5_attention": "../data/Laughing/set_2/gen_MoE_top5_attention/0685_ex02_laughter_gen.wav",
+        "gen_cascaded": "../data/Laughing/set_2/gen_cascaded/0685_ex02_laughter_gen.wav",
+        "gen_expressive": "../data/Laughing/set_2/gen_expressive/0685_ex02_laughter_expressive.wav",
+        "gen_kimi_instruct": "../data/Laughing/set_2/gen_kimi_instruct/0685_ex02_laughter_gen.wav",
+        "gen_ours_100hr": "../data/Laughing/set_2/gen_ours_100hr/0685_ex02_laughter_gen.wav",
+        "gen_seamlessm4t": "../data/Laughing/set_2/gen_seamlessm4t/0685_ex02_laughter_gen.wav"
+      }
+    },
+    {
+      "emotion": "Laughing",
+      "set": "set_3",
+      "source": "../data/Laughing/set_3/source/ex02_laughing_00055.wav",
+      "models": {
+        "gen_MoE_top5_attention": "../data/Laughing/set_3/gen_MoE_top5_attention/ex02_laughing_00055_gen.wav",
+        "gen_cascaded": "../data/Laughing/set_3/gen_cascaded/ex02_laughing_00055_gen.wav",
+        "gen_expressive": "../data/Laughing/set_3/gen_expressive/ex02_laughing_00055_expressive.wav",
+        "gen_kimi_instruct": "../data/Laughing/set_3/gen_kimi_instruct/ex02_laughing_00055_gen.wav",
+        "gen_ours_100hr": "../data/Laughing/set_3/gen_ours_100hr/ex02_laughing_00055_gen.wav",
+        "gen_seamlessm4t": "../data/Laughing/set_3/gen_seamlessm4t/ex02_laughing_00055_gen.wav"
+      }
+    },
+    {
+      "emotion": "Laughing",
+      "set": "set_4",
+      "source": "../data/Laughing/set_4/source/ex04_laughing_00343.wav",
+      "models": {
+        "gen_MoE_top5_attention": "../data/Laughing/set_4/gen_MoE_top5_attention/ex04_laughing_00343_gen.wav",
+        "gen_cascaded": "../data/Laughing/set_4/gen_cascaded/ex04_laughing_00343_gen.wav",
+        "gen_expressive": "../data/Laughing/set_4/gen_expressive/ex04_laughing_00343_expressive.wav",
+        "gen_kimi_instruct": "../data/Laughing/set_4/gen_kimi_instruct/ex04_laughing_00343_gen.wav",
+        "gen_ours_100hr": "../data/Laughing/set_4/gen_ours_100hr/ex04_laughing_00343_gen.wav",
+        "gen_seamlessm4t": "../data/Laughing/set_4/gen_seamlessm4t/ex04_laughing_00343_gen.wav"
+      }
+    },
+    {
+      "emotion": "Laughing",
+      "set": "set_5",
+      "source": "../data/Laughing/set_5/source/id00272_OgsyLGXoyWo_00143.wav",
+      "models": {
+        "gen_MoE_top5_attention": "../data/Laughing/set_5/gen_MoE_top5_attention/id00272_OgsyLGXoyWo_00143_gen.wav",
+        "gen_cascaded": "../data/Laughing/set_5/gen_cascaded/id00272_OgsyLGXoyWo_00143_gen.wav",
+        "gen_expressive": "../data/Laughing/set_5/gen_expressive/id00272_OgsyLGXoyWo_00143_expressive.wav",
+        "gen_kimi_instruct": "../data/Laughing/set_5/gen_kimi_instruct/id00272_OgsyLGXoyWo_00143_gen.wav",
+        "gen_ours_100hr": "../data/Laughing/set_5/gen_ours_100hr/id00272_OgsyLGXoyWo_00143_gen.wav",
+        "gen_seamlessm4t": "../data/Laughing/set_5/gen_seamlessm4t/id00272_OgsyLGXoyWo_00143_gen.wav"
+      }
+    },
+    {
+      "emotion": "Neutral",
+      "set": "set_1",
+      "source": "../data/Neutral/set_1/source/id00020_uo0V-qY1Z24_00396.wav",
+      "models": {
+        "gen_MoE_top5_attention": "../data/Neutral/set_1/gen_MoE_top5_attention/id00020_uo0V-qY1Z24_00396_gen.wav",
+        "gen_cascaded": "../data/Neutral/set_1/gen_cascaded/id00020_uo0V-qY1Z24_00396_gen.wav",
+        "gen_expressive": "../data/Neutral/set_1/gen_expressive/id00020_uo0V-qY1Z24_00396_expressive.wav",
+        "gen_kimi_instruct": "../data/Neutral/set_1/gen_kimi_instruct/id00020_uo0V-qY1Z24_00396_gen.wav",
+        "gen_ours_100hr": "../data/Neutral/set_1/gen_ours_100hr/id00020_uo0V-qY1Z24_00396_gen.wav",
+        "gen_seamlessm4t": "../data/Neutral/set_1/gen_seamlessm4t/id00020_uo0V-qY1Z24_00396_gen.wav"
+      }
+    },
+    {
+      "emotion": "Neutral",
+      "set": "set_2",
+      "source": "../data/Neutral/set_2/source/id00928_u8YDTQMV5Ac_00088.wav",
+      "models": {
+        "gen_MoE_top5_attention": "../data/Neutral/set_2/gen_MoE_top5_attention/id00928_u8YDTQMV5Ac_00088_gen.wav",
+        "gen_cascaded": "../data/Neutral/set_2/gen_cascaded/id00928_u8YDTQMV5Ac_00088_gen.wav",
+        "gen_expressive": "../data/Neutral/set_2/gen_expressive/id00928_u8YDTQMV5Ac_00088_expressive.wav",
+        "gen_kimi_instruct": "../data/Neutral/set_2/gen_kimi_instruct/id00928_u8YDTQMV5Ac_00088_gen.wav",
+        "gen_ours_100hr": "../data/Neutral/set_2/gen_ours_100hr/id00928_u8YDTQMV5Ac_00088_gen.wav",
+        "gen_seamlessm4t": "../data/Neutral/set_2/gen_seamlessm4t/id00928_u8YDTQMV5Ac_00088_gen.wav"
+      }
+    },
+    {
+      "emotion": "Neutral",
+      "set": "set_3",
+      "source": "../data/Neutral/set_3/source/id03822_RSi8q8fhYXA_00142.wav",
+      "models": {
+        "gen_MoE_top5_attention": "../data/Neutral/set_3/gen_MoE_top5_attention/id03822_RSi8q8fhYXA_00142_gen.wav",
+        "gen_cascaded": "../data/Neutral/set_3/gen_cascaded/id03822_RSi8q8fhYXA_00142_gen.wav",
+        "gen_expressive": "../data/Neutral/set_3/gen_expressive/id03822_RSi8q8fhYXA_00142_expressive.wav",
+        "gen_kimi_instruct": "../data/Neutral/set_3/gen_kimi_instruct/id03822_RSi8q8fhYXA_00142_gen.wav",
+        "gen_ours_100hr": "../data/Neutral/set_3/gen_ours_100hr/id03822_RSi8q8fhYXA_00142_gen.wav",
+        "gen_seamlessm4t": "../data/Neutral/set_3/gen_seamlessm4t/id03822_RSi8q8fhYXA_00142_gen.wav"
+      }
+    },
+    {
+      "emotion": "Neutral",
+      "set": "set_4",
+      "source": "../data/Neutral/set_4/source/id04334_EZ1s12AT7tM_00118.wav",
+      "models": {
+        "gen_MoE_top5_attention": "../data/Neutral/set_4/gen_MoE_top5_attention/id04334_EZ1s12AT7tM_00118_gen.wav",
+        "gen_cascaded": "../data/Neutral/set_4/gen_cascaded/id04334_EZ1s12AT7tM_00118_gen.wav",
+        "gen_expressive": "../data/Neutral/set_4/gen_expressive/id04334_EZ1s12AT7tM_00118_expressive.wav",
+        "gen_kimi_instruct": "../data/Neutral/set_4/gen_kimi_instruct/id04334_EZ1s12AT7tM_00118_gen.wav",
+        "gen_ours_100hr": "../data/Neutral/set_4/gen_ours_100hr/id04334_EZ1s12AT7tM_00118_gen.wav",
+        "gen_seamlessm4t": "../data/Neutral/set_4/gen_seamlessm4t/id04334_EZ1s12AT7tM_00118_gen.wav"
+      }
+    },
+    {
+      "emotion": "Neutral",
+      "set": "set_5",
+      "source": "../data/Neutral/set_5/source/id04517_Fft-7TBJESE_00092.wav",
+      "models": {
+        "gen_MoE_top5_attention": "../data/Neutral/set_5/gen_MoE_top5_attention/id04517_Fft-7TBJESE_00092_gen.wav",
+        "gen_cascaded": "../data/Neutral/set_5/gen_cascaded/id04517_Fft-7TBJESE_00092_gen.wav",
+        "gen_expressive": "../data/Neutral/set_5/gen_expressive/id04517_Fft-7TBJESE_00092_expressive.wav",
+        "gen_kimi_instruct": "../data/Neutral/set_5/gen_kimi_instruct/id04517_Fft-7TBJESE_00092_gen.wav",
+        "gen_ours_100hr": "../data/Neutral/set_5/gen_ours_100hr/id04517_Fft-7TBJESE_00092_gen.wav",
+        "gen_seamlessm4t": "../data/Neutral/set_5/gen_seamlessm4t/id04517_Fft-7TBJESE_00092_gen.wav"
+      }
+    },
+    {
+      "emotion": "Sad",
+      "set": "set_1",
+      "source": "../data/Sad/set_1/source/ex03-ex01_laughing_002-ex01_laughing_css009.wav",
+      "models": {
+        "gen_MoE_top5_attention": "../data/Sad/set_1/gen_MoE_top5_attention/ex03-ex01_laughing_002-ex01_laughing_css009_gen.wav",
+        "gen_cascaded": "../data/Sad/set_1/gen_cascaded/ex03-ex01_laughing_002-ex01_laughing_css009_gen.wav",
+        "gen_expressive": "../data/Sad/set_1/gen_expressive/ex03-ex01_laughing_002-ex01_laughing_css009_expressive.wav",
+        "gen_kimi_instruct": "../data/Sad/set_1/gen_kimi_instruct/ex03-ex01_laughing_002-ex01_laughing_css009_gen.wav",
+        "gen_ours_100hr": "../data/Sad/set_1/gen_ours_100hr/ex03-ex01_laughing_002-ex01_laughing_css009_gen.wav",
+        "gen_seamlessm4t": "../data/Sad/set_1/gen_seamlessm4t/ex03-ex01_laughing_002-ex01_laughing_css009_gen.wav"
+      }
+    },
+    {
+      "emotion": "Sad",
+      "set": "set_2",
+      "source": "../data/Sad/set_2/source/ex03-ex01_sleepy_001-ex01_sleepy_css039.wav",
+      "models": {
+        "gen_MoE_top5_attention": "../data/Sad/set_2/gen_MoE_top5_attention/ex03-ex01_sleepy_001-ex01_sleepy_css039_gen.wav",
+        "gen_cascaded": "../data/Sad/set_2/gen_cascaded/ex03-ex01_sleepy_001-ex01_sleepy_css039_gen.wav",
+        "gen_expressive": "../data/Sad/set_2/gen_expressive/ex03-ex01_sleepy_001-ex01_sleepy_css039_expressive.wav",
+        "gen_kimi_instruct": "../data/Sad/set_2/gen_kimi_instruct/ex03-ex01_sleepy_001-ex01_sleepy_css039_gen.wav",
+        "gen_ours_100hr": "../data/Sad/set_2/gen_ours_100hr/ex03-ex01_sleepy_001-ex01_sleepy_css039_gen.wav",
+        "gen_seamlessm4t": "../data/Sad/set_2/gen_seamlessm4t/ex03-ex01_sleepy_001-ex01_sleepy_css039_gen.wav"
+      }
+    },
+    {
+      "emotion": "Sad",
+      "set": "set_3",
+      "source": "../data/Sad/set_3/source/ex03-ex01_sleepy_001-ex01_sleepy_css041.wav",
+      "models": {
+        "gen_MoE_top5_attention": "../data/Sad/set_3/gen_MoE_top5_attention/ex03-ex01_sleepy_001-ex01_sleepy_css041_gen.wav",
+        "gen_cascaded": "../data/Sad/set_3/gen_cascaded/ex03-ex01_sleepy_001-ex01_sleepy_css041_gen.wav",
+        "gen_expressive": "../data/Sad/set_3/gen_expressive/ex03-ex01_sleepy_001-ex01_sleepy_css041_expressive.wav",
+        "gen_kimi_instruct": "../data/Sad/set_3/gen_kimi_instruct/ex03-ex01_sleepy_001-ex01_sleepy_css041_gen.wav",
+        "gen_ours_100hr": "../data/Sad/set_3/gen_ours_100hr/ex03-ex01_sleepy_001-ex01_sleepy_css041_gen.wav",
+        "gen_seamlessm4t": "../data/Sad/set_3/gen_seamlessm4t/ex03-ex01_sleepy_001-ex01_sleepy_css041_gen.wav"
+      }
+    },
+    {
+      "emotion": "Sad",
+      "set": "set_4",
+      "source": "../data/Sad/set_4/source/ex03-ex02_sympathetic-sad_008-ex03_sympathetic_css013.wav",
+      "models": {
+        "gen_MoE_top5_attention": "../data/Sad/set_4/gen_MoE_top5_attention/ex03-ex02_sympathetic-sad_008-ex03_sympathetic_css013_gen.wav",
+        "gen_cascaded": "../data/Sad/set_4/gen_cascaded/ex03-ex02_sympathetic-sad_008-ex03_sympathetic_css013_gen.wav",
+        "gen_expressive": "../data/Sad/set_4/gen_expressive/ex03-ex02_sympathetic-sad_008-ex03_sympathetic_css013_expressive.wav",
+        "gen_kimi_instruct": "../data/Sad/set_4/gen_kimi_instruct/ex03-ex02_sympathetic-sad_008-ex03_sympathetic_css013_gen.wav",
+        "gen_ours_100hr": "../data/Sad/set_4/gen_ours_100hr/ex03-ex02_sympathetic-sad_008-ex03_sympathetic_css013_gen.wav",
+        "gen_seamlessm4t": "../data/Sad/set_4/gen_seamlessm4t/ex03-ex02_sympathetic-sad_008-ex03_sympathetic_css013_gen.wav"
+      }
+    },
+    {
+      "emotion": "Sad",
+      "set": "set_5",
+      "source": "../data/Sad/set_5/source/ex04-ex01_sympathetic-sad_010-ex01_sad_css040.wav",
+      "models": {
+        "gen_MoE_top5_attention": "../data/Sad/set_5/gen_MoE_top5_attention/ex04-ex01_sympathetic-sad_010-ex01_sad_css040_gen.wav",
+        "gen_cascaded": "../data/Sad/set_5/gen_cascaded/ex04-ex01_sympathetic-sad_010-ex01_sad_css040_gen.wav",
+        "gen_expressive": "../data/Sad/set_5/gen_expressive/ex04-ex01_sympathetic-sad_010-ex01_sad_css040_expressive.wav",
+        "gen_kimi_instruct": "../data/Sad/set_5/gen_kimi_instruct/ex04-ex01_sympathetic-sad_010-ex01_sad_css040_gen.wav",
+        "gen_ours_100hr": "../data/Sad/set_5/gen_ours_100hr/ex04-ex01_sympathetic-sad_010-ex01_sad_css040_gen.wav",
+        "gen_seamlessm4t": "../data/Sad/set_5/gen_seamlessm4t/ex04-ex01_sympathetic-sad_010-ex01_sad_css040_gen.wav"
+      }
+    }
+  ]
+}

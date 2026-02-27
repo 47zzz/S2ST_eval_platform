@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AB Test Evaluation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+TC:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .pref-section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-top: 24px;
+            text-align: center;
+        }
+
+        .pref-section h3 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+
+        .pref-section p {
+            font-size: 0.82rem;
+            color: var(--muted);
+            margin-bottom: 18px;
+        }
+
+        #done-screen {
+            display: none;
+            text-align: center;
+            padding: 80px 20px;
+        }
+
+        #done-screen h2 {
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+            color: var(--green);
+        }
+
+        #done-screen p {
+            color: var(--muted);
+            max-width: 440px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page-content">
+
+        <div style="margin-bottom:8px;">
+            <div class="page-title">
+                <span class="lang-zh">AB Test 評測</span>
+                <span class="lang-en">AB Test Evaluation</span>
+            </div>
+            <div class="page-subtitle" id="sub-title">Loading…</div>
+        </div>
+
+        <!-- Progress -->
+        <div class="progress-wrap">
+            <div class="progress-label">
+                <span id="progress-label">Set 0 / ?</span>
+            </div>
+            <div class="progress-bar-track">
+                <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+            </div>
+        </div>
+
+        <div id="loading" style="text-align:center; padding:60px; color:var(--muted);">Loading…</div>
+
+        <!-- AB content container -->
+        <div id="ab-grid" style="display:none; flex-direction:column; gap:16px;"></div>
+
+        <!-- Preference -->
+        <div class="pref-section" id="pref-section" style="display:none;">
+            <h3>
+                <span class="lang-zh">哪個模型的情緒相似度較高，較接近來源語音？</span>
+                <span class="lang-en">Which model has higher emotion similarity to the source?</span>
+            </h3>
+            <p>
+                <span class="lang-zh">請選擇您的偏好</span>
+                <span class="lang-en">Please select your preference</span>
+            </p>
+            <div class="radio-row" id="radio-row">
+                <label class="radio-card" id="radio-A">
+                    <input type="radio" name="pref" value="A"> Model A
+                </label>
+                <label class="radio-card" id="radio-B">
+                    <input type="radio" name="pref" value="B"> Model B
+                </label>
+                <label class="radio-card" id="radio-tie">
+                    <input type="radio" name="pref" value="tie"> Tie / Similar
+                </label>
+            </div>
+        </div>
+
+        <div class="val-warn" id="val-warn">
+            Please select a preference before submitting.
+        </div>
+
+        <div style="text-align:center; margin-top:28px; display:none; gap:16px; justify-content:center;"
+            id="submit-row">
+            <button class="btn btn-secondary" id="prev-btn" style="display:none;">← Previous</button>
+            <button class="btn btn-primary" id="submit-btn" style="min-width:140px;">Next →</button>
+        </div>
+
+        <!-- Done screen -->
+        <div id="done-screen">
+            <h2>Evaluation Complete</h2>
+            <p>
+                感謝您完成所有評測。<br>
+                Thank you for completing all evaluations.<br><br>
+                您的結果已儲存，請告知研究者您已完成。<br>
+                Your results have been saved. Please notify the researcher.
+            </p>
+        </div>
+
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        requireAuth();
+        initLangSwitcher();
+
+        let sets = [], config = {}, order = [], currentIdx = 0, allResults = [];
+        let audioPlayers = [];
+
+        async function init() {
+            [sets, config] = await Promise.all([apiGetSets(), apiGetConfig()]);
+            const modelA = config.ab_test?.model_a;
+            const modelB = config.ab_test?.model_b;
+
+            const validSets = sets.filter(s => s.models[modelA] && s.models[modelB]);
+            if (!validSets.length) {
+                document.getElementById('loading').innerHTML =
+                    `<div style="color:var(--red)">No AB test data found.<br>
+       Set <code>model_a</code> and <code>model_b</code> in <code>config.json</code>
+       and ensure matching audio folders exist in <code>data/</code>.</div>`;
+                return;
+            }
+            sets = validSets;
+
+            const subjectId = Session.get('subject_id');
+            const prng = getSeededRNG(subjectId, 'ab_order');
+            order = shuffle([...Array(sets.length).keys()], prng);
+
+            const state = loadLocalState('ab');
+            if (state && state.order && state.order.join(',') === order.join(',')) {
+                allResults = state.allResults || [];
+                currentIdx = state.currentIdx || 0;
+                if (currentIdx >= order.length) currentIdx = order.length - 1;
+            }
+
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('ab-grid').style.display = 'flex';
+            document.getElementById('pref-section').style.display = 'block';
+            document.getElementById('submit-row').style.display = 'flex';
+
+            renderSet();
+        }
+
+        // Track which real model is displayed as A/B for each set
+        let currentSwapped = false;
+
+        function renderSet() {
+            updateProgress(currentIdx + 1, order.length);
+            const setData = sets[order[currentIdx]];
+            const realModelA = config.ab_test.model_a;
+            const realModelB = config.ab_test.model_b;
+
+            document.getElementById('sub-title').textContent =
+                'Listen to each audio, then select your preference.';
+            document.getElementById('prev-btn').style.display = currentIdx === 0 ? 'none' : 'inline-flex';
+            document.getElementById('submit-btn').textContent = currentIdx === order.length - 1 ? 'Submit & Finish ✔' : 'Next →';
+
+            const subjectId = Session.get('subject_id');
+            const setPrng = getSeededRNG(subjectId, 'ab_swap_' + setData.set + '_' + setData.emotion);
+            currentSwapped = setPrng() < 0.5;
+
+            const displayA_model = currentSwapped ? realModelB : realModelA;
+            const displayB_model = currentSwapped ? realModelA : realModelB;
+
+            const grid = document.getElementById('ab-grid');
+            grid.innerHTML = '';
+            audioPlayers = [];
+
+            // Reset radio
+            document.querySelectorAll('input[name="pref"]').forEach(r => r.checked = false);
+            document.querySelectorAll('.radio-card').forEach(c => c.classList.remove('selected'));
+
+            // ── Source Audio (top row, matching MOS layout) ──────────────────
+            const srcPanel = document.createElement('div');
+            srcPanel.className = 'eval-source-panel';
+
+            const topRow = document.createElement('div');
+            topRow.className = 'eval-source-panel-top';
+            const srcLbl = document.createElement('div');
+            srcLbl.className = 'source-label';
+            srcLbl.textContent = 'Source Audio';
+            topRow.appendChild(srcLbl);
+
+            if (setData.source) {
+                const srcPlayer = makeAudioPlayer(setData.source);
+                srcPlayer.wrap.style.flex = '1';
+                topRow.appendChild(srcPlayer.wrap);
+                audioPlayers.push(srcPlayer);
+            }
+
+            srcPanel.appendChild(topRow);
+            const srcNvSel = makeNonverbalSelector('ab_src');
+            srcNvSel.wrap.id = 'nv-ab_src';
+            srcPanel.appendChild(srcNvSel.wrap);
+            grid.appendChild(srcPanel);
+
+            // ── Models container (side by side) ─────────────────────────────
+            const modelsContainer = document.createElement('div');
+            modelsContainer.style.display = 'flex';
+            modelsContainer.style.gap = '16px';
+            modelsContainer.style.flexWrap = 'wrap';
+
+            // ── Model A column ──────────────────────────────────────────────────
+            const colA = document.createElement('div');
+            colA.className = 'eval-model-row';
+            colA.style.flex = '1';
+            colA.style.minWidth = '300px';
+
+            const gridA = document.createElement('div');
+            gridA.style.display = 'flex';
+            gridA.style.alignItems = 'center';
+            gridA.style.gap = '16px';
+            gridA.style.marginBottom = '12px';
+
+            const tagA = document.createElement('div');
+            tagA.className = 'model-tag';
+            tagA.textContent = 'Model A';
+            tagA.style.minWidth = '80px';
+            tagA.style.textAlign = 'center';
+            gridA.appendChild(tagA);
+
+            const apA = makeAudioPlayer(setData.models[displayA_model]);
+            apA.wrap.style.flex = '1';
+            gridA.appendChild(apA.wrap);
+            audioPlayers.push(apA);
+            colA.appendChild(gridA);
+
+            const nvSelA = makeNonverbalSelector('ab_modelA');
+            nvSelA.wrap.id = 'nv-ab_modelA';
+            colA.appendChild(nvSelA.wrap);
+            modelsContainer.appendChild(colA);
+
+            // ── Model B column ──────────────────────────────────────────────────
+            const colB = document.createElement('div');
+            colB.className = 'eval-model-row';
+            colB.style.flex = '1';
+            colB.style.minWidth = '300px';
+
+            const gridB = document.createElement('div');
+            gridB.style.display = 'flex';
+            gridB.style.alignItems = 'center';
+            gridB.style.gap = '16px';
+            gridB.style.marginBottom = '12px';
+
+            const tagB = document.createElement('div');
+            tagB.className = 'model-tag';
+            tagB.textContent = 'Model B';
+            tagB.style.minWidth = '80px';
+            tagB.style.textAlign = 'center';
+            gridB.appendChild(tagB);
+
+            const apB = makeAudioPlayer(setData.models[displayB_model]);
+            apB.wrap.style.flex = '1';
+            gridB.appendChild(apB.wrap);
+            audioPlayers.push(apB);
+            colB.appendChild(gridB);
+
+            const nvSelB = makeNonverbalSelector('ab_modelB');
+            nvSelB.wrap.id = 'nv-ab_modelB';
+            colB.appendChild(nvSelB.wrap);
+            modelsContainer.appendChild(colB);
+
+            grid.appendChild(modelsContainer);
+
+            // Radio card highlighting
+            document.querySelectorAll('input[name="pref"]').forEach(radio => {
+                radio.addEventListener('change', () => {
+                    document.querySelectorAll('.radio-card').forEach(c => c.classList.remove('selected'));
+                    radio.closest('.radio-card').classList.add('selected');
+                });
+            });
+
+            // Prefill if saved
+            const savedData = allResults[currentIdx];
+            if (savedData) {
+                if (savedData.preference) {
+                    const rad = document.querySelector(`input[name="pref"][value="${savedData.preference}"]`);
+                    if (rad) {
+                        rad.checked = true;
+                        document.querySelectorAll('.radio-card').forEach(c => c.classList.remove('selected'));
+                        rad.closest('.radio-card').classList.add('selected');
+                    }
+                }
+                if (savedData.nv_source) {
+                    const rad = srcNvSel.wrap.querySelector(`input[value="${savedData.nv_source}"]`);
+                    if (rad) rad.checked = true;
+                }
+                if (savedData.nv_model_a) {
+                    const rad = nvSelA.wrap.querySelector(`input[value="${savedData.nv_model_a}"]`);
+                    if (rad) rad.checked = true;
+                }
+                if (savedData.nv_model_b) {
+                    const rad = nvSelB.wrap.querySelector(`input[value="${savedData.nv_model_b}"]`);
+                    if (rad) rad.checked = true;
+                }
+            }
+        }
+
+        document.getElementById('prev-btn').addEventListener('click', () => {
+            audioPlayers.forEach(ap => ap.reset());
+            if (currentIdx > 0) {
+                currentIdx--;
+                saveLocalState('ab', { order, currentIdx, allResults });
+                renderSet();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+
+        document.getElementById('submit-btn').addEventListener('click', async () => {
+            const btn = document.getElementById('submit-btn');
+            btn.disabled = true;
+
+            const pref = document.querySelector('input[name="pref"]:checked');
+            const warn = document.getElementById('val-warn');
+            if (!pref) { warn.style.display = 'block'; btn.disabled = false; return; }
+            warn.style.display = 'none';
+
+            const setData = sets[order[currentIdx]];
+
+            const nvSrc = document.querySelector('#nv-ab_src input:checked');
+            const nvMA = document.querySelector('#nv-ab_modelA input:checked');
+            const nvMB = document.querySelector('#nv-ab_modelB input:checked');
+
+            // Record which real model was displayed as A and B
+            const realModelA = config.ab_test.model_a;
+            const realModelB = config.ab_test.model_b;
+
+            allResults[currentIdx] = {
+                phase: 'ab',
+                subject_id: Session.get('subject_id'),
+                emotion: setData.emotion,
+                set: setData.set,
+                model_a: config.ab_test.model_a,
+                model_b: config.ab_test.model_b,
+                display_a_is: currentSwapped ? realModelB : realModelA,
+                display_b_is: currentSwapped ? realModelA : realModelB,
+                swapped: currentSwapped,
+                preference: pref.value,
+                nv_source: nvSrc ? nvSrc.value : null,
+                nv_model_a: nvMA ? nvMA.value : null,
+                nv_model_b: nvMB ? nvMB.value : null,
+                timestamp: new Date().toISOString()
+            };
+
+            audioPlayers.forEach(ap => ap.reset());
+            currentIdx++;
+
+            saveLocalState('ab', { order, currentIdx, allResults });
+
+            if (currentIdx >= order.length) {
+                document.getElementById('ab-grid').style.display = 'none';
+                document.getElementById('pref-section').style.display = 'none';
+                document.getElementById('submit-row').style.display = 'none';
+                document.getElementById('progress-fill').style.width = '100%';
+                document.getElementById('progress-label').textContent = 'All sets completed!';
+
+                const ok = await apiSave('ab', allResults);
+                if (ok) clearLocalState('ab');
+
+                document.getElementById('done-screen').style.display = 'block';
+            } else {
+                renderSet();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                btn.disabled = false;
+            }
+        });
+
+        init();
+    </script>
+</body>
+
+</html>

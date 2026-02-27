@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MOS Evaluation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+TC:wght@400;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    #loading {
+      text-align: center;
+      padding: 80px 20px;
+      color: var(--muted);
+    }
+
+    .submit-row {
+      display: flex;
+      justify-content: center;
+      margin-top: 28px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page-content">
+
+    <div style="display:flex; align-items:baseline; gap:12px; margin-bottom:6px;">
+      <div class="page-title">
+        <span class="lang-zh">正式評測 (MOS)</span>
+        <span class="lang-en">Formal MOS Evaluation</span>
+      </div>
+    </div>
+    <div class="page-subtitle" id="sub-title">Loading sets…</div>
+
+    <!-- Progress -->
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span id="progress-label">Set 0 / 30</span>
+      </div>
+      <div class="progress-bar-track">
+        <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <!-- Scale reference (shown after loading) -->
+    <div class="scale-ref" id="scale-ref" style="display:none;">
+      <div class="ref-row">
+        <span class="ref-label">
+          <span class="lang-zh">情緒相似度 (Emotion Similarity)</span>
+          <span class="lang-en">Emotion Similarity</span>
+        </span>
+        <span class="ref-item"><b>1</b> <span class="lang-zh">非常不同</span><span class="lang-en">Very
+            different</span></span>
+        <span class="ref-item"><b>2</b> <span class="lang-zh">有一點不同</span><span class="lang-en">Slightly
+            different</span></span>
+        <span class="ref-item"><b>3</b> <span class="lang-zh">普通／中立</span><span class="lang-en">Neutral</span></span>
+        <span class="ref-item"><b>4</b> <span class="lang-zh">有一點相似</span><span class="lang-en">Slightly
+            similar</span></span>
+        <span class="ref-item"><b>5</b> <span class="lang-zh">非常相似</span><span class="lang-en">Very
+            similar</span></span>
+      </div>
+      <div class="ref-row">
+        <span class="ref-label">
+          <span class="lang-zh">自然度 (Naturalness)</span>
+          <span class="lang-en">Naturalness</span>
+        </span>
+        <span class="ref-item"><b>1</b> <span class="lang-zh">非常不自然</span><span class="lang-en">Very
+            unnatural</span></span>
+        <span class="ref-item"><b>2</b> <span class="lang-zh">有一點不自然</span><span class="lang-en">Slightly
+            unnatural</span></span>
+        <span class="ref-item"><b>3</b> <span class="lang-zh">普通／中立</span><span class="lang-en">Neutral</span></span>
+        <span class="ref-item"><b>4</b> <span class="lang-zh">有一點自然</span><span class="lang-en">Slightly
+            natural</span></span>
+        <span class="ref-item"><b>5</b> <span class="lang-zh">非常自然</span><span class="lang-en">Very
+            natural</span></span>
+      </div>
+
+    </div>
+
+    <div id="loading">Loading audio sets…</div>
+
+    <!-- Source panel (top) -->
+    <div id="source-panel" style="display:none;"></div>
+
+    <!-- Column header row -->
+    <div class="eval-header-row" id="header-row" style="display:none;">
+      <div>Model</div>
+      <div>Audio</div>
+      <div>
+        <span class="lang-zh">情緒相似度 (Emotion Similarity)</span>
+        <span class="lang-en">Emotion Similarity</span>
+      </div>
+      <div>
+        <span class="lang-zh">自然度 (Naturalness)</span>
+        <span class="lang-en">Naturalness</span>
+      </div>
+    </div>
+
+    <!-- Model rows -->
+    <div class="eval-table" id="eval-table" style="display:none;"></div>
+
+    <div class="val-warn" id="val-warn">
+      Please rate all models (both sliders) before submitting.
+    </div>
+
+    <div class="submit-row" id="submit-row" style="display:none; gap:16px;">
+      <button class="btn btn-secondary" id="prev-btn" style="display:none;">← Previous</button>
+      <button class="btn btn-primary" id="submit-btn" style="min-width:140px;">Next →</button>
+    </div>
+
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    requireAuth();
+    initLangSwitcher();
+
+    const NAT_LABELS = ['非常不自然', '有一點不自然', '普通／中立', '有一點自然', '非常自然'];
+    const EMO_LABELS = ['非常不同', '有一點不同', '普通／中立', '有一點相似', '非常相似'];
+    const ALPHA = ['A', 'B', 'C', 'D', 'E', 'F'];
+
+    // Only these 6 models are included in MOS evaluation
+    const MOS_MODELS = [
+      'gen_MoE_top5_attention',
+      'gen_cascaded',
+      'gen_expressive',
+      'gen_kimi_instruct',
+      'gen_seamlessm4t',
+      'ChatGPT_audio',
+    ];
+
+    let sets = [], order = [], currentIdx = 0, resultsBySet = [];
+    let currentModelMap = [], audioPlayers = [];
+
+    async function init() {
+      sets = await apiGetSets();
+      if (!sets || !sets.length) {
+        document.getElementById('loading').innerHTML =
+          'No audio sets found. Please add data to <code>data/</code> and run <code>generate_manifest.py</code>.';
+        return;
+      }
+
+      const subjectId = Session.get('subject_id');
+      const prng = getSeededRNG(subjectId, 'mos_order');
+      order = shuffle([...Array(sets.length).keys()], prng);
+
+      // Resume from local state if available and order matches
+      const state = loadLocalState('mos');
+      if (state && state.order && state.order.join(',') === order.join(',')) {
+        resultsBySet = state.resultsBySet || [];
+        currentIdx = state.currentIdx || 0;
+        // if completed, jump to end to trigger save/redirect
+        if (currentIdx >= order.length) currentIdx = order.length - 1;
+      }
+
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('scale-ref').style.display = 'flex';
+      document.getElementById('source-panel').style.display = 'block';
+      document.getElementById('header-row').style.display = 'grid';
+      document.getElementById('eval-table').style.display = 'flex';
+      document.getElementById('submit-row').style.display = 'flex';
+      renderSet();
+    }
+
+    function renderSet() {
+      updateProgress(currentIdx + 1, order.length);
+      const setData = sets[order[currentIdx]];
+      document.getElementById('sub-title').textContent =
+        'Listen to the source, then rate each model. For Emotion Similarity, always compare against the source audio.';
+
+      document.getElementById('prev-btn').style.display = currentIdx === 0 ? 'none' : 'inline-flex';
+      document.getElementById('submit-btn').textContent = currentIdx === order.length - 1 ? 'Submit & Finish ✔' : 'Next →';
+
+      audioPlayers = [];
+      const savedData = resultsBySet[currentIdx];
+
+      // ── Source panel (matching practice_mos.html structure) ─────────────────
+      const srcPanel = document.getElementById('source-panel');
+      srcPanel.className = 'eval-source-panel';
+      srcPanel.innerHTML = '';
+
+      const topRow = document.createElement('div');
+      topRow.className = 'eval-source-panel-top';
+      const srcLbl = document.createElement('div');
+      srcLbl.className = 'source-label';
+      srcLbl.textContent = 'Source Audio';
+      topRow.appendChild(srcLbl);
+
+      if (setData.source) {
+        const srcPlayer = makeAudioPlayer(setData.source);
+        srcPlayer.wrap.style.flex = '1';
+        topRow.appendChild(srcPlayer.wrap);
+        audioPlayers.push(srcPlayer);
+      } else {
+        const na = document.createElement('span');
+        na.style.cssText = 'font-size:.8rem;color:var(--red);flex:1;';
+        na.textContent = 'No source file';
+        topRow.appendChild(na);
+      }
+
+      srcPanel.appendChild(topRow);
+      const srcNvSel = makeNonverbalSelector('nv_src');
+      if (savedData && savedData.src_nv) {
+        const rad = srcNvSel.wrap.querySelector(`input[value="${savedData.src_nv}"]`);
+        if (rad) rad.checked = true;
+      }
+      srcPanel.appendChild(srcNvSel.wrap);
+
+      // ── Filter & shuffle only MOS models ───────────────────────────────────
+      const subjectId = Session.get('subject_id');
+      const setPrng = getSeededRNG(subjectId, 'mos_models_' + setData.set + '_' + setData.emotion);
+      const mosEntries = MOS_MODELS.map(m => [m, setData.models[m] || null]);
+      const shuffled = shuffle(mosEntries, setPrng);
+      currentModelMap = shuffled.map(([folder, url], i) => ({ label: ALPHA[i], folder, url }));
+
+      // ── Model rows (matching practice_mos.html structure) ──────────────────
+      const table = document.getElementById('eval-table');
+      table.innerHTML = '';
+
+      currentModelMap.forEach(({ label, folder, url }, i) => {
+        const row = document.createElement('div');
+        row.className = 'eval-model-row';
+        row.dataset.folder = folder;
+
+        const grid = document.createElement('div');
+        grid.className = 'eval-model-row-grid';
+
+        // Col 1: label
+        const tag = document.createElement('div');
+        tag.className = 'model-tag';
+        tag.textContent = `Model ${label}`;
+        grid.appendChild(tag);
+
+        // Col 2: audio player (or placeholder if audio not yet available)
+        if (url) {
+          const ap = makeAudioPlayer(url);
+          grid.appendChild(ap.wrap);
+          audioPlayers.push(ap);
+        } else {
+          const placeholder = document.createElement('div');
+          placeholder.className = 'audio-player';
+          placeholder.innerHTML = '<span style="font-size:.8rem;color:var(--muted);padding:8px;">Audio not yet available</span>';
+          grid.appendChild(placeholder);
+        }
+
+        // Col 3: Emotion similarity
+        const { wrap: emoWrap, slider: emoSlider } = makeSlider(`emo_${i}`, 'Emotion Similarity', EMO_LABELS);
+        grid.appendChild(emoWrap);
+
+        // Col 4: Naturalness
+        const { wrap: natWrap, slider: natSlider } = makeSlider(`nat_${i}`, 'Naturalness', NAT_LABELS);
+        grid.appendChild(natWrap);
+
+        row.appendChild(grid);
+
+        // Nonverbal selector below the grid
+        const nvSel = makeNonverbalSelector(`nv_${i}`);
+        nvSel.wrap.id = `nvsel-${i}`;
+        row.appendChild(nvSel.wrap);
+
+        // Prefill if saved
+        if (savedData) {
+          const mData = savedData.models.find(m => m.folder === folder);
+          if (mData) {
+            emoSlider.value = mData.emotion_sim;
+            emoSlider.dataset.touched = 'true';
+            emoSlider.dispatchEvent(new Event('input'));
+
+            natSlider.value = mData.naturalness;
+            natSlider.dataset.touched = 'true';
+            natSlider.dispatchEvent(new Event('input'));
+
+            if (mData.nonverbal_type) {
+              const rad = nvSel.wrap.querySelector(`input[value="${mData.nonverbal_type}"]`);
+              if (rad) rad.checked = true;
+            }
+          }
+        }
+
+        table.appendChild(row);
+      });
+    }
+
+    document.getElementById('prev-btn').addEventListener('click', () => {
+      audioPlayers.forEach(ap => ap.reset());
+      if (currentIdx > 0) {
+        currentIdx--;
+        saveLocalState('mos', { order, currentIdx, resultsBySet });
+        renderSet();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    });
+
+    document.getElementById('submit-btn').addEventListener('click', async () => {
+      const btn = document.getElementById('submit-btn');
+      btn.disabled = true;
+
+      const warn = document.getElementById('val-warn');
+      let valid = true;
+      currentModelMap.forEach((_, i) => {
+        const n = document.getElementById(`slider-nat_${i}`);
+        const e = document.getElementById(`slider-emo_${i}`);
+        if (n.dataset.touched !== 'true' || e.dataset.touched !== 'true') valid = false;
+      });
+      if (!valid) {
+        warn.style.display = 'block';
+        warn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        btn.disabled = false;
+        return;
+      }
+      warn.style.display = 'none';
+
+      const setData = sets[order[currentIdx]];
+      const srcNvChecked = document.querySelector('[name="nv_src"]:checked');
+
+      const setResults = { src_nv: srcNvChecked ? srcNvChecked.value : null, models: [] };
+
+      currentModelMap.forEach(({ label, folder }, i) => {
+        const nvChecked = document.querySelector(`#nvsel-${i} input:checked`);
+        setResults.models.push({
+          label, folder,
+          naturalness: parseInt(document.getElementById(`slider-nat_${i}`).value),
+          emotion_sim: parseInt(document.getElementById(`slider-emo_${i}`).value),
+          nonverbal_type: nvChecked ? nvChecked.value : null
+        });
+      });
+
+      resultsBySet[currentIdx] = setResults;
+      audioPlayers.forEach(ap => ap.reset());
+      currentIdx++;
+
+      saveLocalState('mos', { order, currentIdx, resultsBySet });
+
+      if (currentIdx >= order.length) {
+        ['source-panel', 'header-row', 'eval-table', 'submit-row'].forEach(id =>
+          document.getElementById(id).style.display = 'none');
+        document.getElementById('progress-fill').style.width = '100%';
+        document.getElementById('progress-label').textContent = 'All sets completed!';
+
+        const msg = document.createElement('div');
+        msg.style.cssText = 'text-align:center;padding:40px;color:var(--muted);';
+        msg.textContent = 'Saving results…';
+        document.querySelector('.page-content').appendChild(msg);
+
+        // Flatten results for API
+        const allResults = [];
+        resultsBySet.forEach((res, idx) => {
+          const sd = sets[order[idx]];
+          res.models.forEach(m => {
+            allResults.push({
+              phase: 'mos',
+              subject_id: Session.get('subject_id'),
+              emotion: sd.emotion,
+              set: sd.set,
+              display_label: m.label,
+              model_folder: m.folder,
+              naturalness: m.naturalness,
+              emotion_sim: m.emotion_sim,
+              nonverbal_type: m.nonverbal_type,
+              source_nonverbal: res.src_nv,
+              timestamp: new Date().toISOString()
+            });
+          });
+        });
+
+        const ok = await apiSave('mos', allResults);
+        if (ok) clearLocalState('mos');
+
+        location.href = 'instruction_ab.html';
+      } else {
+        renderSet();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        btn.disabled = false;
+      }
+    });
+
+    init();
+  </script>
+</body>
+
+</html>

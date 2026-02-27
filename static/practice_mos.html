@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practice — MOS Evaluation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+TC:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="page-content">
+
+        <div class="page-title">
+            <span class="lang-zh">練習評測</span>
+            <span class="lang-en">Practice Evaluation</span>
+        </div>
+        <div class="page-subtitle" style="margin-bottom:18px;">
+            <span class="lang-zh">請熟悉介面後，再進入正式評測</span>
+            <span class="lang-en">Familiarise yourself with the interface before the formal evaluation</span>
+        </div>
+
+        <!-- Scale reference -->
+        <div class="scale-ref">
+            <div class="ref-row">
+                <span class="ref-label">
+                    <span class="lang-zh">情緒相似度 (Emotion Similarity)</span>
+                    <span class="lang-en">Emotion Similarity</span>
+                </span>
+                <span class="ref-item"><b>1</b> <span class="lang-zh">非常不同</span><span class="lang-en">Very
+                        different</span></span>
+                <span class="ref-item"><b>2</b> <span class="lang-zh">有一點不同</span><span class="lang-en">Slightly
+                        different</span></span>
+                <span class="ref-item"><b>3</b> <span class="lang-zh">普通／中立</span><span
+                        class="lang-en">Neutral</span></span>
+                <span class="ref-item"><b>4</b> <span class="lang-zh">有一點相似</span><span class="lang-en">Slightly
+                        similar</span></span>
+                <span class="ref-item"><b>5</b> <span class="lang-zh">非常相似</span><span class="lang-en">Very
+                        similar</span></span>
+            </div>
+            <div class="ref-row">
+                <span class="ref-label">
+                    <span class="lang-zh">自然度 (Naturalness)</span>
+                    <span class="lang-en">Naturalness</span>
+                </span>
+                <span class="ref-item"><b>1</b> <span class="lang-zh">非常不自然</span><span class="lang-en">Very
+                        unnatural</span></span>
+                <span class="ref-item"><b>2</b> <span class="lang-zh">有一點不自然</span><span class="lang-en">Slightly
+                        unnatural</span></span>
+                <span class="ref-item"><b>3</b> <span class="lang-zh">普通／中立</span><span
+                        class="lang-en">Neutral</span></span>
+                <span class="ref-item"><b>4</b> <span class="lang-zh">有一點自然</span><span class="lang-en">Slightly
+                        natural</span></span>
+                <span class="ref-item"><b>5</b> <span class="lang-zh">非常自然</span><span class="lang-en">Very
+                        natural</span></span>
+            </div>
+
+        </div>
+
+        <!-- Source panel -->
+        <div class="eval-source-panel" id="src-panel"></div>
+
+        <!-- Header -->
+        <div class="eval-header-row">
+            <div>Model</div>
+            <div>Audio</div>
+            <div>Emotion Similarity（情緒相似度）</div>
+            <div>Naturalness（自然度）</div>
+        </div>
+
+        <!-- Model rows -->
+        <div class="eval-table" id="eval-table"></div>
+
+        <!-- Validation warnings -->
+        <div class="val-warn" id="warn-nv" style="display:none;font-size:0.95rem;line-height:1.7;text-align:left;">
+            <span class="lang-zh">⚠️ 本題為前述說明頁所提供之範例音檔，依據評定標準，來源語音中的非語言特徵（邊笑邊講話）應被標記。<br>請於 Source Audio
+                區域勾選「<b>Laughing</b>」後再進入正式評測。</span>
+            <span class="lang-en">⚠️ This practice item uses the anchor audio from the instruction page. According to
+                the criteria, the nonverbal cue (laughing while speaking) present in the source audio should be
+                marked.<br>Please select "<b>Laughing</b>" in the Source Audio section before proceeding.</span>
+        </div>
+        <div class="val-warn" id="warn-emo" style="display:none;font-size:0.95rem;line-height:1.7;text-align:left;">
+            <span class="lang-zh">⚠️
+                情緒相似度評分提示：評估時應<b>排除語者資訊</b>（如語者身份、性別、年齡、音色差異等），僅就兩段音檔所傳達的<b>情緒表現</b>進行比較。<br>本組測試中，Source
+                Audio 與 Model A 皆呈現出一種<b>激昂、興奮且愉悅</b>的情緒基調，因此在情緒相似度的評分上，應較接近「<b>4 有一點相似</b>」或「<b>5
+                    非常相似</b>」。請重新評估後再進入正式評測。</span>
+            <span class="lang-en">⚠️ Emotion Similarity scoring note: Please <b>exclude speaker identity information</b>
+                (such as speaker identity, timbre differences, etc.) and focus solely on comparing the <b>emotional
+                    expression</b> conveyed in both audio clips.<br>In this practice set, both the Source Audio and
+                Model A convey an <b>enthusiastic, excited, and joyful</b> emotional tone. Therefore, the Emotion
+                Similarity score should be closer to "<b>4 — Slightly similar</b>" or "<b>5 — Very similar</b>". Please
+                reassess before proceeding.</span>
+        </div>
+        <div class="val-warn" id="warn-incomplete"
+            style="display:none;font-size:0.95rem;line-height:1.7;text-align:left;">
+            <span class="lang-zh">⚠️ 請完成所有評分項目（情緒相似度及自然度）後，再進入正式評測。</span>
+            <span class="lang-en">⚠️ Please complete all ratings (Emotion Similarity and Naturalness) before proceeding
+                to the formal evaluation.</span>
+        </div>
+
+        <div style="text-align:center; margin-top:32px;">
+            <button class="btn btn-primary" id="start-btn">
+                <span class="lang-zh">開始正式評測 →</span>
+                <span class="lang-en">Start Formal Evaluation →</span>
+            </button>
+        </div>
+
+    </div>
+    <script src="app.js"></script>
+    <script>
+        requireAuth();
+        initLangSwitcher();
+
+        const SRC_AUDIO = '../data/anchor/laughing_example.wav';
+        const MODEL_A_AUDIO = '../data/anchor/practice_model_a.wav';
+        const NAT_LABELS = ['非常不自然', '有一點不自然', '普通／中立', '有一點自然', '非常自然'];
+        const EMO_LABELS = ['非常不同', '有一點不同', '普通／中立', '有一點相似', '非常相似'];
+
+        // ── Source panel ──────────────────────────────────────────────
+        const srcPanel = document.getElementById('src-panel');
+        const topRow = document.createElement('div');
+        topRow.className = 'eval-source-panel-top';
+        const srcLbl = document.createElement('div');
+        srcLbl.className = 'source-label';
+        srcLbl.textContent = 'Source Audio';
+        topRow.appendChild(srcLbl);
+        const srcAp = makeAudioPlayer(SRC_AUDIO);
+        srcAp.wrap.style.flex = '1';
+        topRow.appendChild(srcAp.wrap);
+        srcPanel.appendChild(topRow);
+        srcPanel.appendChild(makeNonverbalSelector('p_nv_src').wrap);
+
+        // ── Single Model A row ────────────────────────────────────────
+        const table = document.getElementById('eval-table');
+
+        const row = document.createElement('div');
+        row.className = 'eval-model-row';
+
+        const grid = document.createElement('div');
+        grid.className = 'eval-model-row-grid';
+
+        const tag = document.createElement('div');
+        tag.className = 'model-tag';
+        tag.textContent = 'Model A';
+        grid.appendChild(tag);
+
+        const ap = makeAudioPlayer(MODEL_A_AUDIO);
+        grid.appendChild(ap.wrap);
+
+        const { wrap: emoWrap } = makeSlider('p_emo_0', 'Emotion Similarity', EMO_LABELS);
+        const { wrap: natWrap } = makeSlider('p_nat_0', 'Naturalness', NAT_LABELS);
+        grid.appendChild(emoWrap);
+        grid.appendChild(natWrap);
+
+        row.appendChild(grid);
+        row.appendChild(makeNonverbalSelector('p_nv_0').wrap);
+        table.appendChild(row);
+
+        // ── Validation on submit ──────────────────────────────────────
+        document.getElementById('start-btn').addEventListener('click', () => {
+            const warnNv = document.getElementById('warn-nv');
+            const warnEmo = document.getElementById('warn-emo');
+            const warnInc = document.getElementById('warn-incomplete');
+            warnNv.style.display = 'none';
+            warnEmo.style.display = 'none';
+            warnInc.style.display = 'none';
+
+            let hasError = false;
+
+            // Check 0: All sliders must have been touched
+            const emoSlider = document.getElementById('slider-p_emo_0');
+            const natSlider = document.getElementById('slider-p_nat_0');
+            const emoTouched = emoSlider.dataset.touched === 'true';
+            const natTouched = natSlider.dataset.touched === 'true';
+            if (!emoTouched || !natTouched) {
+                warnInc.style.display = 'block';
+                warnInc.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                hasError = true;
+            }
+
+            // Check 1: Source Audio must have "Laughing" selected for nonverbal
+            const srcNvChecked = document.querySelector('[name="p_nv_src"]:checked');
+            if (!srcNvChecked || srcNvChecked.value !== 'laughing') {
+                warnNv.style.display = 'block';
+                if (!hasError) warnNv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                hasError = true;
+            }
+
+            // Check 2: Model A Emotion Similarity must be 4 or 5
+            const emoVal = parseInt(emoSlider.value);
+            if (emoTouched && emoVal < 4) {
+                warnEmo.style.display = 'block';
+                if (!hasError) warnEmo.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                hasError = true;
+            }
+
+            if (!hasError) {
+                location.href = 'eval_mos.html';
+            }
+        });
+    </script>
+</body>
+
+</html>
