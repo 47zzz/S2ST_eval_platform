@@ -2,6 +2,8 @@ from flask import Flask, request, send_from_directory, jsonify
 from flask_cors import CORS
 import os
 import json
+import time
+import uuid
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 app = Flask(__name__, static_folder=os.path.join(BASE_DIR, 'static'), static_url_path='')
@@ -39,17 +41,11 @@ def login():
 # ── Save results ──────────────────────────────────────────────────────────────
 
 def _find_save_path(subject_id, phase):
-    """Return a filepath that doesn't yet exist for this (subject, phase)."""
-    base = os.path.join(SAVE_DIR, f"{subject_id}_{phase}")
-    path = base + ".jsonl"
-    if not os.path.exists(path):
-        return path
-    n = 2
-    while True:
-        path = f"{base}_{n}.jsonl"
-        if not os.path.exists(path):
-            return path
-        n += 1
+    """Return a unique filepath for this (subject, phase)."""
+    timestamp = int(time.time() * 1000)
+    unique_id = uuid.uuid4().hex[:6]
+    base = os.path.join(SAVE_DIR, f"{subject_id}_{phase}_{timestamp}_{unique_id}")
+    return base + ".jsonl"
 
 
 @app.route('/save', methods=['POST'])
