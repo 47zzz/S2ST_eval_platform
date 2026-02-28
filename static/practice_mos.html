@@ -174,9 +174,22 @@
             // Check 0: All sliders must have been touched
             const emoSlider = document.getElementById('slider-p_emo_0');
             const natSlider = document.getElementById('slider-p_nat_0');
+
+            // Reset borders
+            emoSlider.parentElement.style.boxShadow = '';
+            natSlider.parentElement.style.boxShadow = '';
+
             const emoTouched = emoSlider.dataset.touched === 'true';
             const natTouched = natSlider.dataset.touched === 'true';
             if (!emoTouched || !natTouched) {
+                if (!emoTouched) {
+                    emoSlider.parentElement.style.boxShadow = '0 0 0 2px lightcoral';
+                    emoSlider.parentElement.style.borderRadius = '4px';
+                }
+                if (!natTouched) {
+                    natSlider.parentElement.style.boxShadow = '0 0 0 2px lightcoral';
+                    natSlider.parentElement.style.borderRadius = '4px';
+                }
                 warnInc.style.display = 'block';
                 warnInc.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 hasError = true;
