@@ -68,14 +68,13 @@ function shuffle(arr, rng = Math.random) {
 // ── Offline data / save ───────────────────────────────────────────────────────
 
 async function apiGetSets() {
-  const res = await fetch('data_manifest.json');
-  if (!res.ok) throw new Error('data_manifest.json not found. Run generate_manifest.py first.');
-  const manifest = await res.json();
-  return manifest.sets || [];
+  const res = await fetch('/api/sets');
+  if (!res.ok) throw new Error('API fetch error');
+  return res.json();
 }
 
 async function apiGetConfig() {
-  const res = await fetch('config.json');
+  const res = await fetch('/api/config');
   if (!res.ok) return { ab_test: { model_a: '', model_b: '' } };
   return res.json();
 }
@@ -111,27 +110,42 @@ function clearLocalState(phase) {
 }
 
 /**
- * Save results to localStorage and trigger a JSON download.
- * Uses copy-on-duplicate naming: <subjectId>_<phase>.json,
- * <subjectId>_<phase>_2.json, etc.
+ * Save results to backend API (/save).
  */
-function apiSave(phase, records) {
+async function apiSave(phase, records) {
   const subjectId = Session.get('subject_id');
   const key = `eval_${subjectId}_${phase}`;
 
   // Persist in localStorage as well (backup)
   try { localStorage.setItem(key + '_' + Date.now(), JSON.stringify(records)); } catch { }
 
-  // Download JSON file (duplicate-safe: timestamp guarantees uniqueness)
-  const ts = new Date().toISOString().replace(/[:.]/g, '-');
-  const filename = `${subjectId}_${phase}_${ts}.json`;
-  const blob = new Blob([JSON.stringify(records, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = filename; a.click();
-  URL.revokeObjectURL(url);
-
-  return Promise.resolve({ ok: true, file: filename });
+  // Send to backend server
+  try {
+    const res = await fetch('/save', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        subject_id: subjectId,
+        phase: phase,
+        records: records
+      })
+    });
+    
+    if (!res.ok) throw new Error('Failed to save on server');
+    return await res.json();
+  } catch (err) {
+    console.error('API Save error:', err);
+    alert('無法將結果儲存到伺服器！已為您打包下載備份記錄。');
+    // Fallback: Download JSON file (duplicate-safe: timestamp guarantees uniqueness)
+    const ts = new Date().toISOString().replace(/[:.]/g, '-');
+    const filename = `${subjectId}_${phase}_${ts}.json`;
+    const blob = new Blob([JSON.stringify(records, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename; a.click();
+    URL.revokeObjectURL(url);
+    return { ok: false, error: err.message };
+  }
 }
 
 // ── Play button factory ──────────────────────────────────────────────────────

@@ -103,8 +103,9 @@
     <!-- Model rows -->
     <div class="eval-table" id="eval-table" style="display:none;"></div>
 
-    <div class="val-warn" id="val-warn">
-      Please rate all models (both sliders) before submitting.
+    <div class="val-warn" id="val-warn" style="display:none;font-size:0.95rem;line-height:1.7;text-align:left;">
+      <span class="lang-zh">⚠️ 請完成所有評分項目（情緒相似度及自然度）後，再進入正式評測。</span>
+      <span class="lang-en">Please rate all models (both sliders) before submitting.</span>
     </div>
 
     <div class="submit-row" id="submit-row" style="display:none; gap:16px;">
@@ -304,7 +305,21 @@
       currentModelMap.forEach((_, i) => {
         const n = document.getElementById(`slider-nat_${i}`);
         const e = document.getElementById(`slider-emo_${i}`);
-        if (n.dataset.touched !== 'true' || e.dataset.touched !== 'true') valid = false;
+
+        // Reset borders
+        n.parentElement.style.boxShadow = '';
+        e.parentElement.style.boxShadow = '';
+
+        if (n.dataset.touched !== 'true') {
+          valid = false;
+          n.parentElement.style.boxShadow = '0 0 0 2px lightcoral';
+          n.parentElement.style.borderRadius = '4px';
+        }
+        if (e.dataset.touched !== 'true') {
+          valid = false;
+          e.parentElement.style.boxShadow = '0 0 0 2px lightcoral';
+          e.parentElement.style.borderRadius = '4px';
+        }
       });
       if (!valid) {
         warn.style.display = 'block';

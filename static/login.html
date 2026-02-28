@@ -141,7 +141,7 @@
 
     <script src="app.js"></script>
     <script>
-        const PASSWORD = '123456';
+        // [資安] 密碼驗證透過後端 API，前端不再暴露密碼
 
         document.getElementById('login-form').addEventListener('submit', async e => {
             e.preventDefault();
@@ -159,8 +159,24 @@
                 loginBtn.disabled = false;
                 return;
             }
-            if (password !== PASSWORD) {
-                errEl.textContent = 'Incorrect password. Please try again.';
+
+            // 透過後端驗證密碼
+            try {
+                const res = await fetch('/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ subject_id, password })
+                });
+                const result = await res.json();
+
+                if (!res.ok || !result.ok) {
+                    errEl.textContent = result.error || 'Incorrect password. Please try again.';
+                    errEl.style.display = 'block';
+                    loginBtn.disabled = false;
+                    return;
+                }
+            } catch (err) {
+                errEl.textContent = 'Server connection error. Please try again.';
                 errEl.style.display = 'block';
                 loginBtn.disabled = false;
                 return;
@@ -174,21 +190,18 @@
 
             if (mosState || abState) {
                 try {
-                    const [setsResp, configResp] = await Promise.all([
-                        fetch('data_manifest.json'),
-                        fetch('config.json')
+                    const [setsData, config] = await Promise.all([
+                        fetch('/api/sets').then(r => r.json()),
+                        fetch('/api/config').then(r => r.json())
                     ]);
-                    const manifest = await setsResp.json();
-                    const config = await configResp.json();
-                    const totalSets = manifest.sets ? manifest.sets.length : 0;
+                    const totalSets = setsData ? setsData.length : 0;
 
                     let statusText = '';
                     let targetUrl = 'instruction_mos.html';
 
                     // Determine what phase to resume to
                     if (abState) {
-                        const abValidSets = manifest.sets.filter(s => s.models[config.ab_test.model_a] && s.models[config.ab_test.model_b]).length;
-                        // if MOS is done and AB exists, we resume AB
+                        const abValidSets = setsData.filter(s => s.models[config.ab_test.model_a] && s.models[config.ab_test.model_b]).length;
                         statusText = `AB Test (${abState.currentIdx}/${abValidSets})`;
                         targetUrl = 'eval_ab.html';
                     } else if (mosState) {
