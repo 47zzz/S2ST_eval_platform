@@ -1,16 +1,23 @@
-from flask import Flask, request, send_from_directory, jsonify
-from flask_cors import CORS
+from flask import Flask, request, send_from_directory, jsonify, abort
 import os
 import json
+import time
+import uuid
+import re
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 app = Flask(__name__, static_folder=os.path.join(BASE_DIR, 'static'), static_url_path='')
-CORS(app, resources={r"/*": {"origins": "*"}})
+
+# [資安] 限制請求大小為 10 MB，防止惡意使用者傳送超大 JSON 塞爆硬碟
+app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024  # 10 MB
 
 SAVE_DIR = os.path.join(BASE_DIR, 'saved')
 DATA_DIR = os.path.join(BASE_DIR, 'data')
 CONFIG_PATH = os.path.join(BASE_DIR, 'config.json')
 PASSWORD = "123456"
+
+# [資安] 限制每次存檔最多接受的 record 數量，防止單次大量寫入
+MAX_RECORDS_PER_SAVE = 500
 
 os.makedirs(SAVE_DIR, exist_ok=True)
 
@@ -39,29 +46,38 @@ def login():
 # ── Save results ──────────────────────────────────────────────────────────────
 
 def _find_save_path(subject_id, phase):
-    """Return a filepath that doesn't yet exist for this (subject, phase)."""
-    base = os.path.join(SAVE_DIR, f"{subject_id}_{phase}")
-    path = base + ".jsonl"
-    if not os.path.exists(path):
-        return path
-    n = 2
-    while True:
-        path = f"{base}_{n}.jsonl"
-        if not os.path.exists(path):
-            return path
-        n += 1
+    """Return a unique filepath for this (subject, phase)."""
+    # [資安防護] 過濾不安全的字元，防止使用者輸入含有 ../ 等路徑穿越的字串
+    subject_id = re.sub(r'[^a-zA-Z0-9_\-]', '', subject_id)
+    phase = re.sub(r'[^a-zA-Z0-9_\-]', '', phase)
+    
+    timestamp = int(time.time() * 1000)
+    unique_id = uuid.uuid4().hex[:6]
+    base = os.path.join(SAVE_DIR, f"{subject_id}_{phase}_{timestamp}_{unique_id}")
+    return base + ".jsonl"
 
 
 @app.route('/save', methods=['POST'])
 def save():
     try:
         data = request.get_json()
+        if not data:
+            return jsonify({'ok': False, 'error': 'Invalid JSON'}), 400
+
         subject_id = (data.get('subject_id') or '').strip()
         phase = (data.get('phase') or '').strip()   # 'mos' | 'ab'
         records = data.get('records')
 
         if not subject_id or not phase or not records:
             return jsonify({'ok': False, 'error': 'Missing fields'}), 400
+
+        # [資安] phase 只允許 'mos' 或 'ab'
+        if phase not in ('mos', 'ab'):
+            return jsonify({'ok': False, 'error': 'Invalid phase'}), 400
+
+        # [資安] 限制 records 必須是 list 且數量不能過多
+        if not isinstance(records, list) or len(records) > MAX_RECORDS_PER_SAVE:
+            return jsonify({'ok': False, 'error': f'Too many records (max {MAX_RECORDS_PER_SAVE})'}), 400
 
         filepath = _find_save_path(subject_id, phase)
         with open(filepath, 'w', encoding='utf-8') as f:
@@ -72,7 +88,8 @@ def save():
         return jsonify({'ok': True, 'file': os.path.basename(filepath)})
     except Exception as e:
         print(f"[ERROR] {e}")
-        return jsonify({'ok': False, 'error': str(e)}), 500
+        # [資安] 不要把內部錯誤訊息暴露給外部使用者
+        return jsonify({'ok': False, 'error': 'Internal server error'}), 500
 
 
 # ── Data listing ──────────────────────────────────────────────────────────────
@@ -118,24 +135,35 @@ def list_sets():
 
 @app.route('/api/config')
 def get_config():
-    return send_from_directory(BASE_DIR, 'config.json')
+    # [資安] 只回傳前端需要的設定，不洩漏其他資訊
+    config = json.load(open(CONFIG_PATH, encoding='utf-8'))
+    safe_config = {
+        'ab_test': config.get('ab_test', {}),
+        'emotions': config.get('emotions', []),
+        'sets_per_emotion': config.get('sets_per_emotion', 0),
+        'models_per_set': config.get('models_per_set', 0)
+    }
+    return jsonify(safe_config)
 
 
 # ── Audio files ───────────────────────────────────────────────────────────────
 
 @app.route('/audio/<path:filepath>')
 def serve_audio(filepath):
-    directory, filename = os.path.split(os.path.join(DATA_DIR, filepath))
-    return send_from_directory(directory, filename)
+    # [資安防護] 直接將 DATA_DIR 交給 send_from_directory，Flask 內部會自動阻擋所有嘗試跑到 DATA_DIR 外面 (../) 的請求
+    return send_from_directory(DATA_DIR, filepath)
 
 
 @app.route('/data/<path:filepath>')
 def serve_data(filepath):
-    directory, filename = os.path.split(os.path.join(DATA_DIR, filepath))
-    return send_from_directory(directory, filename)
+    # [資安防護] 同上，交由 Flask 安全地提供檔案
+    return send_from_directory(DATA_DIR, filepath)
 
 
 # ── Static frontend ───────────────────────────────────────────────────────────
+
+# [資安] 只允許存取的靜態檔案副檔名白名單
+ALLOWED_STATIC_EXT = {'.html', '.css', '.js', '.json', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico', '.woff', '.woff2', '.ttf'}
 
 @app.route('/')
 def index():
@@ -144,8 +172,12 @@ def index():
 
 @app.route('/<path:filename>')
 def static_files(filename):
+    # [資安] 阻擋存取 .py、.gitignore 等敏感檔案
+    ext = os.path.splitext(filename)[1].lower()
+    if ext not in ALLOWED_STATIC_EXT:
+        abort(404)
     return app.send_static_file(filename)
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8321, debug=True)
+    app.run(host='0.0.0.0', port=8321, debug=False)
